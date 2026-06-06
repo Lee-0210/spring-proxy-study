@@ -15,7 +15,7 @@ public class OrderRepositoryInterfaceProxy implements OrderRepositoryV1 {
     public void save(String itemId) {
         TraceStatus status = null;
         try {
-            status = logTrace.begin("OrderRepository.request()");
+            status = logTrace.begin("OrderRepository.save()");
             // target 호출
             target.save(itemId);
             logTrace.end(status);
