@@ -20,13 +20,13 @@ public class AdvisorTest {
     @Test
     void advisorTest1() {
         ServiceInterface target = new ServiceImpl();
-        ProxyFactory proxyFactor = new ProxyFactory(target);
+        ProxyFactory proxyFactory = new ProxyFactory(target);
         // 어드바이저 세팅
         DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(Pointcut.TRUE, new TimeAdvice());
-        proxyFactor.addAdvisor(advisor);
+        proxyFactory.addAdvisor(advisor);
 
         // Proxy 객체 생성
-        ServiceInterface proxy = (ServiceInterface)proxyFactor.getProxy();
+        ServiceInterface proxy = (ServiceInterface)proxyFactory.getProxy();
         proxy.save();
         proxy.find();
     }
@@ -35,13 +35,13 @@ public class AdvisorTest {
     @DisplayName("직접 만든 포인트컷")
     void advisorTest2() {
         ServiceInterface target = new ServiceImpl();
-        ProxyFactory proxyFactor = new ProxyFactory(target);
+        ProxyFactory proxyFactory = new ProxyFactory(target);
         // 어드바이저 세팅
         DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(new MyPointCut(), new TimeAdvice());
-        proxyFactor.addAdvisor(advisor);
+        proxyFactory.addAdvisor(advisor);
 
         // Proxy 객체 생성
-        ServiceInterface proxy = (ServiceInterface)proxyFactor.getProxy();
+        ServiceInterface proxy = (ServiceInterface)proxyFactory.getProxy();
         proxy.save();
         proxy.find();
     }
@@ -50,7 +50,7 @@ public class AdvisorTest {
     @DisplayName("스프링이 제공하는 포인트컷")
     void advisorTest3() {
         ServiceInterface target = new ServiceImpl();
-        ProxyFactory proxyFactor = new ProxyFactory(target);
+        ProxyFactory proxyFactory = new ProxyFactory(target);
 
         // 스프링 제공 Pointcut
         NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
@@ -58,10 +58,10 @@ public class AdvisorTest {
 
         // 어드바이저 세팅
         DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(pointcut, new TimeAdvice());
-        proxyFactor.addAdvisor(advisor);
+        proxyFactory.addAdvisor(advisor);
 
         // Proxy 객체 생성
-        ServiceInterface proxy = (ServiceInterface)proxyFactor.getProxy();
+        ServiceInterface proxy = (ServiceInterface)proxyFactory.getProxy();
         proxy.save();
         proxy.find();
     }
