@@ -1,0 +1,83 @@
+package hello.proxy.advisor;
+
+import hello.proxy.common.advice.TimeAdvice;
+import hello.proxy.common.service.ServiceImpl;
+import hello.proxy.common.service.ServiceInterface;
+import java.lang.reflect.Method;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.aop.ClassFilter;
+import org.springframework.aop.MethodMatcher;
+import org.springframework.aop.Pointcut;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+
+@Slf4j
+public class AdvisorTest {
+
+    @Test
+    void advisorTest1() {
+        ServiceInterface target = new ServiceImpl();
+        ProxyFactory proxyFactor = new ProxyFactory(target);
+        // 어드바이저 세팅
+        DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(Pointcut.TRUE, new TimeAdvice());
+        proxyFactor.addAdvisor(advisor);
+
+        // Proxy 객체 생성
+        ServiceInterface proxy = (ServiceInterface)proxyFactor.getProxy();
+        proxy.save();
+        proxy.find();
+    }
+
+    @Test
+    @DisplayName("직접 만든 포인ㅌ트컷")
+    void advisorTest2() {
+        ServiceInterface target = new ServiceImpl();
+        ProxyFactory proxyFactor = new ProxyFactory(target);
+        // 어드바이저 세팅
+        DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(new MyPointCut(), new TimeAdvice());
+        proxyFactor.addAdvisor(advisor);
+
+        // Proxy 객체 생성
+        ServiceInterface proxy = (ServiceInterface)proxyFactor.getProxy();
+        proxy.save();
+        proxy.find();
+    }
+
+    static class MyPointCut implements Pointcut {
+
+        @Override
+        public ClassFilter getClassFilter() {
+            return ClassFilter.TRUE;
+        }
+
+        @Override
+        public MethodMatcher getMethodMatcher() {
+            return new MyMethodMatcher();
+        }
+    }
+
+    static class MyMethodMatcher implements MethodMatcher {
+
+        private String matchName = "save";
+
+        @Override
+        public boolean matches(Method method, Class<?> targetClass) {
+            boolean result = method.getName().equals(matchName);
+            log.info("포인트컷 호출 method={} targetClass={}", method.getName(), targetClass);
+            log.info("포인트컷 결과 result={}", result);
+            return result;
+        }
+
+        @Override
+        public boolean isRuntime() {
+            return false;
+        }
+
+        @Override
+        public boolean matches(Method method, Class<?> targetClass, Object... args) {
+            return false;
+        }
+    }
+}
